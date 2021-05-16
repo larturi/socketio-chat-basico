@@ -4,12 +4,14 @@ const http = require('http');
 const socketio = require('socket.io');
 const path = require('path');
 
+const Sockets = require('./sockets');
+
 class Server {
 
     constructor() {
 
         this.app = express();
-        this.port = 3000;
+        this.port = process.env.PORT;
 
         // Http Server
         this.server = http.createServer(this.app);
@@ -20,7 +22,11 @@ class Server {
     }
 
     execute() {
+        // Inicializar Middlewares
         this.middlewares();
+
+        // Inicializar Sockets
+        this.configurarSockets();
 
         // Inicializar Server
         this.server.listen(this.port, () => {
@@ -31,6 +37,10 @@ class Server {
     middlewares() {
         // Desplegar el directorio publico
         this.app.use( express.static( path.resolve(__dirname, '../public')) );
+    }
+
+    configurarSockets() {
+        new Sockets(this.io);
     }
 
 };
